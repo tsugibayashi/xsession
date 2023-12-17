@@ -29,10 +29,10 @@ xsetroot -solid '#008080'
 xset r rate 300 25
 
 # fcitx
-export GTK_IM_MODULE='fcitx'
-export QT_IM_MODULE='fcitx'
-export XMODIFIERS='@im=fcitx'
-fcitx5 &
+#export GTK_IM_MODULE='fcitx'
+#export QT_IM_MODULE='fcitx'
+#export XMODIFIERS='@im=fcitx'
+#fcitx5 &
 #flatpak run --branch=master --arch=x86_64 --command=/app/bin/fcitx5 org.fcitx.Fcitx5 &
 
 # backlight
@@ -51,16 +51,42 @@ fi
 xset s 1800 1800
 xset -dpms
 
-# Statubar loop for dwm
-while true; do
-	/usr/bin/dwm_statusbar.py xbacklight_bat_hms
-	#/usr/bin/dwm_statusbar.py mpd_light_bat_hms
+# create $HOME/run
+if [ ! -d $HOME/run ]; then
+    mkdir $HOME/run
+fi
 
-	sleep 1s    # Update every second
-	#sleep 5s    # Update every 5 seconds
-	#sleep 1m    # Update every minute
+# Statubar loop for dwm
+echo 0 > $HOME/run/while_loop.txt
+while [ "`cat $HOME/run/while_loop.txt`" = 0 ]; do
+    PROC_NUM=$(pgrep -U $UID -f dwm_statusbar.py | wc -l)
+    # If dwm_statusbar.py is duplicated, kill all dwm_statusbar.py.
+    if [ $PROC_NUM -gt 1 ]; then
+        for i in $(pgrep -U $UID -f dwm_statusbar.py); do
+            kill $i
+        done
+        PROD_NUM=0
+        sleep 1
+    fi
+    # execute dwm_statusbar.py
+    if [ $PROC_NUM -eq 0 ]; then
+	/usr/bin/dwm_statusbar.py xbacklight_bat_hms 1 &
+        #/usr/bin/dwm_statusbar.py light_bat_hms 1 &
+        #/usr/bin/dwm_statusbar.py mpd_light_bat_hms 1 &
+        #/usr/bin/dwm_statusbar.py mpd_vol_light_bat_hms 1 &
+    fi
+
+    sleep 1s    # Update every second
+    #sleep 5s    # Update every 5 seconds
+    #sleep 1m    # Update every minute
 done &
 
 # Window Manager
 /usr/bin/dwm
+
+# Quit infinite loop
+echo 1 > $HOME/run/while_loop.txt
+for i in $(pgrep -U $UID -f dwm_statusbar.py); do
+    kill $i
+done
 

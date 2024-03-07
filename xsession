@@ -70,10 +70,10 @@ while [ "`cat $HOME/run/while_loop.txt`" = 0 ]; do
     fi
     # execute dwm_statusbar.py
     if [ $PROC_NUM -eq 0 ]; then
-	/usr/bin/dwm_statusbar.py xbacklight_bat_hms 1 &
-        #/usr/bin/dwm_statusbar.py light_bat_hms 1 &
-        #/usr/bin/dwm_statusbar.py mpd_light_bat_hms 1 &
-        #/usr/bin/dwm_statusbar.py mpd_vol_light_bat_hms 1 &
+	/usr/bin/dwm_statusbar.py --comps xbacklight bat hms --wait 1 &
+        #/usr/bin/dwm_statusbar.py --comps light bat hms --wait 1 &
+        #/usr/bin/dwm_statusbar.py --comps mpd light bat hms --wait 1 &
+        #/usr/bin/dwm_statusbar.py --comps mpd vol light bat hms --wait 1 &
     fi
 
     sleep 1s    # Update every second

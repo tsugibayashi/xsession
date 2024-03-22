@@ -28,65 +28,55 @@ xsetroot -solid '#008080'
 # key repeat
 xset r rate 300 25
 
-# fcitx
-#export GTK_IM_MODULE='fcitx'
-#export QT_IM_MODULE='fcitx'
-#export XMODIFIERS='@im=fcitx'
-#fcitx5 &
-#flatpak run --branch=master --arch=x86_64 --command=/app/bin/fcitx5 org.fcitx.Fcitx5 &
+# capslock -> ctrl
+#setxkbmap -option ctrl:nocaps
+
+# uim
+#export GTK_IM_MODULE='uim'
+#export QT_IM_MODULE='uim'
+#export XMODIFIERS='@im=uim'
+#uim-xim &
 
 # backlight
 #if [ -f $HOME/.lightrc ]; then
 #    munsell.py light s `cat $HOME/.lightrc | grep ^brightness | gawk '{print($3)}'`
 #else
-#    munsell.py light s 3.0
+#    munsell.py light s 3.5
 #fi
 if [ -f $HOME/.xbacklightrc ]; then
     munsell.py xbacklight s `cat $HOME/.xbacklightrc | grep ^brightness | gawk '{print($3)}'`
 else
-    munsell.py xbacklight s 3.0
+    munsell.py xbacklight s 3.5
 fi
 
 # screen saver off
-xset s 1800 1800
+xset s 3600 3600
 xset -dpms
 
-# create $HOME/run
-if [ ! -d $HOME/run ]; then
-    mkdir $HOME/run
+# Network Manager applet
+#nm-applet &
+
+# create $HOME/log
+if [ ! -d $HOME/log ]; then
+    mkdir $HOME/log
 fi
 
-# Statubar loop for dwm
-echo 0 > $HOME/run/while_loop.txt
-while [ "`cat $HOME/run/while_loop.txt`" = 0 ]; do
-    PROC_NUM=$(pgrep -U $UID -f dwm_statusbar.py | wc -l)
-    # If dwm_statusbar.py is duplicated, kill all dwm_statusbar.py.
-    if [ $PROC_NUM -gt 1 ]; then
-        for i in $(pgrep -U $UID -f dwm_statusbar.py); do
-            kill $i
-        done
-        PROD_NUM=0
-        sleep 1
-    fi
-    # execute dwm_statusbar.py
-    if [ $PROC_NUM -eq 0 ]; then
-	/usr/bin/dwm_statusbar.py --comps xbacklight bat hms --wait 1 &
-        #/usr/bin/dwm_statusbar.py --comps light bat hms --wait 1 &
-        #/usr/bin/dwm_statusbar.py --comps mpd light bat hms --wait 1 &
-        #/usr/bin/dwm_statusbar.py --comps mpd vol light bat hms --wait 1 &
-    fi
+# Start dwmstatusbar.py
+if [ -e /usr/bin/dwmstatusbar.py ]; then
+    date > $HOME/log/dwm_statusbar.log
+    /usr/bin/dwmstatusbar.py --comps xbacklight bat hms --wait 1 >>$HOME/log/dwm_statusbar.log 2>&1 &
+    #/usr/bin/dwmstatusbar.py --comps light bat hms --wait 1 >>$HOME/log/dwm_statusbar.log 2>&1 &
+    #/usr/bin/dwmstatusbar.py --comps mpd light bat hms --wait 1 >>$HOME/log/dwm_statusbar.log 2>&1 &
+    #/usr/bin/dwmstatusbar.py --comps mpd vol light bat hms --wait 1 >>$HOME/log/dwm_statusbar.log 2>&1 &
+fi
 
-    sleep 1s    # Update every second
-    #sleep 5s    # Update every 5 seconds
-    #sleep 1m    # Update every minute
-done &
+#uim-toolbar-gtk3 &
 
 # Window Manager
 /usr/bin/dwm
 
-# Quit infinite loop
-echo 1 > $HOME/run/while_loop.txt
-for i in $(pgrep -U $UID -f dwm_statusbar.py); do
+# Quit dwmstatusbar.py
+for i in $(pgrep -U $UID -f dwmstatusbar.py); do
     kill $i
 done
 

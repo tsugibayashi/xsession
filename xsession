@@ -25,17 +25,20 @@ fi
 #xsetroot -solid SteelBlue
 xsetroot -solid '#008080'
 
-# key repeat
-xset r rate 300 25
-
 # capslock -> ctrl
 #setxkbmap -option ctrl:nocaps
+
+# key repeat
+xset r rate 300 25
 
 # uim
 #export GTK_IM_MODULE='uim'
 #export QT_IM_MODULE='uim'
 #export XMODIFIERS='@im=uim'
 #uim-xim &
+
+# yaskkserv2
+#yaskkserv2 --google-cache-filename=$HOME/tmp/yaskkserv2.cache /usr/share/skk/SKK-JISYO.L.yaskkserv2 &
 
 # backlight
 #if [ -f $HOME/.lightrc ]; then
@@ -66,11 +69,13 @@ if [ -e /usr/bin/dwmstatusbar.py ]; then
     date > $HOME/log/dwm_statusbar.log
     /usr/bin/dwmstatusbar.py --comps xbacklight bat hms --wait 1 >>$HOME/log/dwm_statusbar.log 2>&1 &
     #/usr/bin/dwmstatusbar.py --comps light bat hms --wait 1 >>$HOME/log/dwm_statusbar.log 2>&1 &
+    #/usr/bin/dwmstatusbar.py --comps amixer xbacklight upower hms --wait 1 >>$HOME/log/dwm_statusbar.log 2>&1 &
     #/usr/bin/dwmstatusbar.py --comps mpd light bat hms --wait 1 >>$HOME/log/dwm_statusbar.log 2>&1 &
     #/usr/bin/dwmstatusbar.py --comps mpd vol light bat hms --wait 1 >>$HOME/log/dwm_statusbar.log 2>&1 &
 fi
 
 #uim-toolbar-gtk3 &
+#uim-toolbar-gtk3 -0+38 &
 
 # Window Manager
 /usr/bin/dwm
